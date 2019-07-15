@@ -7,10 +7,12 @@ var entry;
     let flag = [];
     
     let que = [];
-    let adj = [];
+    let adj = [];//图
     
     let path = [];
+    let edge = [];
     
+
     function main(n,arr_k,arr){
         let k = arr_k.length;
         init(n,arr_k);
@@ -28,6 +30,8 @@ var entry;
         }
     
         let min_path = path[min_index][val_index];
+        let min_edge = edge[min_index][val_index];
+
         let set = new Set();
         let path_arr = min_path.split("-");
         path_arr.forEach((val)=>{
@@ -40,9 +44,32 @@ var entry;
         path_arr = [...set];
     
         path_arr.sort((a,b) => a-b);
-        return [min_val,path_arr];
+
+        let point_set = new Set();
+        let temp_arr = min_edge.split("/");
+        let edge_arr = [];
+        temp_arr.forEach((val)=>{
+            if(val !== ""){
+                let value = val.split("-").map((str) => {
+                    let num = Number(str);
+                    point_set.add(num);
+                    return num;
+                });
+                edge_arr.push(value);
+            }
+        });
+
+        let point_arr = [...point_set];
+        point_arr.sort((a,b) => a-b);
+
+        console.log(path_arr);
+        console.log(point_arr);
+
+        return [min_val, path_arr, edge_arr, point_arr];
     }
     
+
+    //初始化相关变量（数组）。
     function init(n,arr_k){
         let k = arr_k.length;
         st = Array(k).fill(0);
@@ -51,9 +78,12 @@ var entry;
             let temp = Array(1<<k).fill(-1);
             let flag_temp = Array(1<<k).fill(false);
             let path_temp = Array(1<<k).fill("");
+
+            let edge_temp = Array(1<<k).fill("");
             dptree.push(temp);
             flag.push(flag_temp);
             path.push(path_temp);
+            edge.push(edge_temp);
     
             let index = arr_k.indexOf(i);
             if(index >= 0){
@@ -63,6 +93,8 @@ var entry;
         }
     }
     
+    
+    //由给出的边集数组生成一个图的数据结构（数组）。
     function graph(n,arr){
         adj = Array(n).fill(null);
     
@@ -85,6 +117,7 @@ var entry;
     }
     
     
+    //真正求解斯坦纳树问题的函数。
     function start(n,k){
     
         for(let j=1; j < 1<<k; j++){
@@ -104,6 +137,7 @@ var entry;
                         if(dptree[i][j] === -1 || dptree[i][j] > temp){
                             dptree[i][j] = temp;
                             path[i][j] = i + "-" + path[i][x] + "-" + path[i][y];
+                            edge[i][j] = edge[i][x] + "/" + edge[i][y];
                         }
                     }
                     //对树拆分后的比较
@@ -122,6 +156,7 @@ var entry;
     }
     
     
+    //spfa算法对边进行松弛操作。
     function spfa(state){
     
         while(que.length){
@@ -135,6 +170,7 @@ var entry;
                 ){
                     dptree[v][st[v]|state] = dptree[u][state] + i.w;
                     path[v][st[v]|state] = u + "-" + path[u][state] + "-" + v;
+                    edge[v][st[v]|state] = edge[u][state] + "/" + u + "-" + v;
     
                     //通过flag数组，让进行松弛操作时，不要加入重复的点。
                     if(st[v]|state !== state || flag[v][state]){
@@ -152,6 +188,7 @@ var entry;
     
     
     
+    //入口函数，根据输入的坐标点集（数组），给出斯坦纳树问题的解。
     entry = function(arr){
     
         let x_arr = new Set();
@@ -205,18 +242,31 @@ var entry;
         }
     
         let result = main(xy_arr.length,arr_k,graph_arr);
+        
         let min_val = result[0];
         let path_arr = result[1];
+        let edge_arr = result[2];
     
         let point_arr = path_arr.map((val) => xy_arr[val]);
+
+        edge_arr = edge_arr.map(function(val){
+            return val.map((index) => xy_arr[index]);
+        });
+
+        // console.log(edge_arr);
+        // console.log(xy_arr);
         // console.log("min_val: " + min_val);
         // console.log("point_arr: ");
-        // console.log(point_arr);
-        return point_arr;
+        console.log(point_arr);
+        console.log(edge_arr);
+        console.log(min_val);
+        return {point: point_arr, edge: edge_arr};
     }
     
     let date_start = new Date().getTime();
     let date_end = new Date().getTime();
+
+    
 
 })();
 
