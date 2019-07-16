@@ -19,9 +19,9 @@ html,body{
     left: 0;
 }
 
-#point.cursor{
-    cursor: pointer;
-}
+
+
+
 
 .y_axis{
     position: absolute;

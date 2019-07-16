@@ -14,7 +14,6 @@ $x_axis.innerHTML = axis_html;
 
 let $grid = document.getElementById("grid");
 let $point = document.getElementById("point");
-let $line = document.getElementById("line");
 
 
 $grid.width = size * size_px;
@@ -23,25 +22,29 @@ $grid.height = size * size_px;
 $point.width = size * size_px;
 $point.height = size * size_px;
 
+
 let grid_ctx = $grid.getContext("2d");
-grid_ctx.strokeStyle = "#666";
-grid_ctx.fillStyle = "#666";
+grid_ctx.strokeStyle = "#b6b6b6";
+grid_ctx.fillStyle = "#b6b6b6";
 
 let point_ctx = $point.getContext("2d");
-point_ctx.strokeStyle = "#666";
-point_ctx.fillStyle = "#666";
+point_ctx.strokeStyle = "#000";
+point_ctx.fillStyle = "#000";
+
+
 
 function draw_grid(){
     grid_ctx.beginPath();
 
+    //绘制网格
     for(let i=1; i<size; i++){
         grid_ctx.moveTo(i * size_px, 1 * size_px);
         grid_ctx.lineTo(i * size_px, (size - 1) * size_px);
         grid_ctx.moveTo(1 * size_px, i * size_px);
         grid_ctx.lineTo((size - 1) * size_px, i * size_px);
-        // grid_ctx.stroke();
     }
     
+    //绘制坐标轴的箭头
     grid_ctx.moveTo(size_px, size_px);
     grid_ctx.lineTo(size_px, size_px/3);
     grid_ctx.lineTo(size_px - 4, size_px/3);
@@ -58,7 +61,7 @@ function draw_grid(){
     grid_ctx.lineTo(size * size_px - size_px/3, (size-1) * size_px + 4);
     grid_ctx.lineTo(size * size_px - size_px/3, (size-1) * size_px);
 
-    // grid_ctx.closePath();
+    grid_ctx.closePath();
 
     grid_ctx.fill();
     grid_ctx.stroke();
@@ -74,7 +77,7 @@ function draw_point(arr){
         let x_px = (x+1) * size_px;
         let y_px = (size - y - 1) * size_px;
         point_ctx.moveTo(x_px, y_px);
-        point_ctx.arc(x_px, y_px, radius_px, 0, 2*Math.PI,true);
+        point_ctx.arc(x_px, y_px, radius_px, 0, 2*Math.PI, true);
     }
     point_ctx.closePath();
     point_ctx.fill();
@@ -85,19 +88,6 @@ function wipe_point(x,y){
     let y_px = (size - y - 1) * size_px;
     // point_ctx.beginPath();
     point_ctx.clearRect(x_px - radius_px, y_px - radius_px, 2*radius_px, 2*radius_px);
-}
-
-//防抖函数
-function debounce(fn, internal){
-
-    let timer = null;
-    return function(){
-        clearTimeout(timer);
-        timer = setTimeout(()=>{
-            fn.apply(this, arguments);
-        }, internal);
-    }
-
 }
 
 let prev_position = null;
@@ -130,7 +120,7 @@ $start.addEventListener("click", function(){
         }
     }
     point_ctx.fillStyle = "#bbb";
-    draw_point(draw_arr);
+    // draw_point(draw_arr);
 
     grid_ctx.beginPath();
     grid_ctx.strokeStyle = "red";
@@ -144,7 +134,7 @@ $start.addEventListener("click", function(){
         let x2_px = (x2 + 1) * size_px;
         let y2_px = (size - y2 - 1) * size_px;
         grid_ctx.moveTo(x1_px, y1_px);
-        grid_ctx.lineTo(x2_px, y2_px);      
+        grid_ctx.lineTo(x2_px, y2_px);
     });
     grid_ctx.stroke();
 });
@@ -159,15 +149,3 @@ function arr_include(arr, val){
 }
 
 
-function init_point(){
-
-}
-
-function find_path(point_arr){
-
-}
-
-
-function repeat(){
-
-}

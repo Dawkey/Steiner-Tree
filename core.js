@@ -6,13 +6,13 @@ var entry;
     let dptree = [];
     let flag = [];
     
-    let que = [];
-    let adj = [];//图
+    let que = [];//spfa用到的队列
+    let adj = [];//图。
     
-    let path = [];
-    let edge = [];
+    let edge = [];//用来存放求解出的斯坦纳树用到的边。
     
 
+    //主程序
     function main(n,arr_k,arr){
         let k = arr_k.length;
         init(n,arr_k);
@@ -29,21 +29,7 @@ var entry;
             }
         }
     
-        let min_path = path[min_index][val_index];
         let min_edge = edge[min_index][val_index];
-
-        let set = new Set();
-        let path_arr = min_path.split("-");
-        path_arr.forEach((val)=>{
-            if(val !== ""){
-                val = Number(val);
-                set.add(val);
-            }
-        });
-    
-        path_arr = [...set];
-    
-        path_arr.sort((a,b) => a-b);
 
         let point_set = new Set();
         let temp_arr = min_edge.split("/");
@@ -62,10 +48,7 @@ var entry;
         let point_arr = [...point_set];
         point_arr.sort((a,b) => a-b);
 
-        console.log(path_arr);
-        console.log(point_arr);
-
-        return [min_val, path_arr, edge_arr, point_arr];
+        return [min_val, point_arr, edge_arr];
     }
     
 
@@ -77,12 +60,10 @@ var entry;
         for(let i=0; i<n; i++){
             let temp = Array(1<<k).fill(-1);
             let flag_temp = Array(1<<k).fill(false);
-            let path_temp = Array(1<<k).fill("");
 
             let edge_temp = Array(1<<k).fill("");
             dptree.push(temp);
             flag.push(flag_temp);
-            path.push(path_temp);
             edge.push(edge_temp);
     
             let index = arr_k.indexOf(i);
@@ -136,7 +117,6 @@ var entry;
                         let temp = dptree[i][x] + dptree[i][y];
                         if(dptree[i][j] === -1 || dptree[i][j] > temp){
                             dptree[i][j] = temp;
-                            path[i][j] = i + "-" + path[i][x] + "-" + path[i][y];
                             edge[i][j] = edge[i][x] + "/" + edge[i][y];
                         }
                     }
@@ -169,7 +149,6 @@ var entry;
                    dptree[v][st[v]|state] > dptree[u][state] + i.w
                 ){
                     dptree[v][st[v]|state] = dptree[u][state] + i.w;
-                    path[v][st[v]|state] = u + "-" + path[u][state] + "-" + v;
                     edge[v][st[v]|state] = edge[u][state] + "/" + u + "-" + v;
     
                     //通过flag数组，让进行松弛操作时，不要加入重复的点。
@@ -187,6 +166,54 @@ var entry;
     }
     
     
+    //把得到的边集（数组）转为一颗树（对象）。
+    function arr_to_tree(edge_arr){
+
+        let out_edge = [];
+        function find_node(val){
+            let ret_arr = [];
+            for(let i=0; i<edge_arr.length; i++){
+                let edge = edge_arr[i];
+                if(out_edge.includes(i)){
+                    continue;
+                }
+
+                if(val.toString() === edge[0].toString()){
+                    ret_arr.push(edge[1]);
+                    out_edge.push(i);
+                }else if(val.toString() === edge[1].toString()){
+                    ret_arr.push(edge[0]);
+                    out_edge.push(i);
+                }
+            }
+
+            if(ret_arr.length === 0){
+                ret_arr = null;
+            }
+            return ret_arr;
+        }
+
+        function generate_tree(node){
+            let child_arr = find_node(node.value);
+            if(child_arr === null){
+                return;
+            }
+
+            let next_arr = child_arr.map((val)=>{
+                let child_node = {value: val, next: null}
+                generate_tree(child_node);
+                return child_node;
+            });
+
+            node.next = next_arr;
+        }
+
+        let tree = {value: edge_arr[0][0], next: null};
+        generate_tree(tree);
+        return tree;
+    }    
+
+
     
     //入口函数，根据输入的坐标点集（数组），给出斯坦纳树问题的解。
     entry = function(arr){
@@ -235,38 +262,29 @@ var entry;
         for(let i=0; i<xy_arr.length; i++){
             for(let j=0; j<arr.length; j++){
                 if(arr[j][0] === xy_arr[i][0] &&
-                  arr[j][1] === xy_arr[i][1]){
+                   arr[j][1] === xy_arr[i][1]){
                     arr_k.push(i);
                 }
             }
         }
     
+
         let result = main(xy_arr.length,arr_k,graph_arr);
         
         let min_val = result[0];
-        let path_arr = result[1];
+        let point_arr = result[1];
         let edge_arr = result[2];
-    
-        let point_arr = path_arr.map((val) => xy_arr[val]);
+
+        point_arr = point_arr.map((val) => xy_arr[val]);
 
         edge_arr = edge_arr.map(function(val){
             return val.map((index) => xy_arr[index]);
         });
+        
+        let tree = arr_to_tree(edge_arr);
 
-        // console.log(edge_arr);
-        // console.log(xy_arr);
-        // console.log("min_val: " + min_val);
-        // console.log("point_arr: ");
-        console.log(point_arr);
-        console.log(edge_arr);
-        console.log(min_val);
-        return {point: point_arr, edge: edge_arr};
-    }
-    
-    let date_start = new Date().getTime();
-    let date_end = new Date().getTime();
-
-    
+        return {cost: min_val, point: point_arr, edge: edge_arr, tree: tree};
+    }   
 
 })();
 
