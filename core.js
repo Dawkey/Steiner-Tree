@@ -1,6 +1,4 @@
-var entry;
-
-(function(){
+function steiner(arr){
 
     let st = [];
     let dptree = [];
@@ -216,7 +214,7 @@ var entry;
 
     
     //入口函数，根据输入的坐标点集（数组），给出斯坦纳树问题的解。
-    entry = function(arr){
+    function entry(arr){
     
         let x_arr = new Set();
         let y_arr = new Set();
@@ -286,5 +284,7 @@ var entry;
         return {cost: min_val, point: point_arr, edge: edge_arr, tree: tree};
     }   
 
-})();
+
+    return entry(arr);
+}
 

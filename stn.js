@@ -26,10 +26,11 @@ $point.height = size * size_px;
 let grid_ctx = $grid.getContext("2d");
 grid_ctx.strokeStyle = "#b6b6b6";
 grid_ctx.fillStyle = "#b6b6b6";
+// grid_ctx.globalCompositeOperation = "source-over";
 
 let point_ctx = $point.getContext("2d");
-point_ctx.strokeStyle = "#000";
-point_ctx.fillStyle = "#000";
+point_ctx.strokeStyle = "#666";
+point_ctx.fillStyle = "#fff";
 
 
 
@@ -76,8 +77,7 @@ function draw_point(arr){
         let y = arr[i][1];
         let x_px = (x+1) * size_px;
         let y_px = (size - y - 1) * size_px;
-        point_ctx.moveTo(x_px, y_px);
-        point_ctx.arc(x_px, y_px, radius_px, 0, 2*Math.PI, true);
+        move_point(point_ctx, x_px, y_px, 0, radius_px, 1);
     }
     point_ctx.closePath();
     point_ctx.fill();
@@ -108,35 +108,88 @@ $point.addEventListener("click", function(e){
 
 let $start = document.querySelector(".start");
 
+let prev_tree = null;
+
 $start.addEventListener("click", function(){
-    let result = entry(entry_arr);
+    let result = steiner(entry_arr);
     let point_arr = result.point;
     let edge_arr = result.edge;
+    let tree = result.tree;
 
-    let draw_arr = [];
-    for(let i=0; i<point_arr.length; i++){
-        if(!arr_include(entry_arr, point_arr[i])){
-            draw_arr.push(point_arr[i]);
-        }
+    // grid_ctx.clearRect(0, 0, 500, 500);
+    // grid_ctx.beginPath();
+    // grid_ctx.strokeStyle = "#b6b6b6";
+    // draw_grid();
+
+    let count = 0;
+
+    if(prev_tree){
+        grid_ctx.beginPath();
+        grid_ctx.strokeStyle = "#b6b6b6";
+        loop_tree(prev_tree, null, Promise.resolve(), function(){
+            // grid_ctx.beginPath();
+            // grid_ctx.strokeStyle = "red";
+
+            // loop_tree(tree, null, Promise.resolve("first"));
+            // grid_ctx.stroke();
+            console.log("wwk");
+        });    
+        grid_ctx.stroke();
+        prev_tree = tree;
+        return;
     }
-    point_ctx.fillStyle = "#bbb";
-    // draw_point(draw_arr);
 
+    prev_tree = tree;
+
+
+    console.log("!!!!!!!!");
     grid_ctx.beginPath();
     grid_ctx.strokeStyle = "red";
-    edge_arr.forEach(function(value){
-        let x1 = value[0][0];
-        let y1 = value[0][1];
-        let x1_px = (x1 + 1) * size_px;
-        let y1_px = (size - y1 - 1) * size_px;
-        let x2 = value[1][0];
-        let y2 = value[1][1];
-        let x2_px = (x2 + 1) * size_px;
-        let y2_px = (size - y2 - 1) * size_px;
-        grid_ctx.moveTo(x1_px, y1_px);
-        grid_ctx.lineTo(x2_px, y2_px);
-    });
+
+    loop_tree(tree, null, Promise.resolve("first"));
     grid_ctx.stroke();
+
+    function loop_tree(node, prev_node, line_promise, fn){
+        if(prev_node){
+            let now_point = node.value;
+            let prev_point = prev_node.value;
+            
+            let x1 = prev_point[0];
+            let y1 = prev_point[1];
+            let x1_px = (x1 + 1) * size_px;
+            let y1_px = (size - y1 - 1) * size_px;
+            let x2 = now_point[0];
+            let y2 = now_point[1];
+            let x2_px = (x2 + 1) * size_px;
+            let y2_px = (size - y2 - 1) * size_px;
+            var temp_promise = line_promise.then(function(val){
+                if(node.next !== null){
+                    count++;
+                }
+                return move_line(grid_ctx, [x1_px, y1_px], [x2_px, y2_px], 1, 1);
+            });
+        }else{
+            temp_promise = line_promise;
+        }
+
+        let next = node.next;
+        if(next === null){
+            temp_promise.then(function(){
+                count++;
+                if(count + 1 === point_arr.length){
+                    if(fn){
+                        fn();
+                    }
+                    console.log("RUA!");
+                }
+            });
+            return;
+        }
+        for(let i=0; i<next.length; i++){
+            let child_node = next[i];
+            loop_tree(child_node, node, temp_promise, fn);
+        }
+    }
 });
 
 
