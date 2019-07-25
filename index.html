@@ -1,20 +1,42 @@
 <!DOCTYPE html>
     <head>
-        <title>stn</title>
-        <link href="stn.css" rel="stylesheet" type="text/css">
+        <title>steiner</title>
+        <link href="steiner.css" rel="stylesheet" type="text/css">
     </head>
     <body>
         <div class="main">
-            <canvas id="grid"></canvas>
-            <canvas id="point"></canvas>
-            
-            <div class="y_axis"></div>
-            <div class="x_axis"></div>
-            <div class="O">O</div>
-            <div class="start">Start</div>
+            <div class="info"></div>
+
+            <div class="axis">
+                <canvas id="grid"></canvas>
+                <canvas id="line"></canvas>
+                <canvas id="point"></canvas>
+                
+                <div class="y_axis"></div>
+                <div class="x_axis"></div>
+                <div class="O">O</div>
+            </div>
+
+            <div class="entry">
+                <div class="point">(1, 5)</div>
+                <div class="point">(12, 7)</div>
+                <div class="point">(12, 10)</div>
+            </div>
+            <div class="result">
+                <div class="time">
+                    time: 5m 42s
+                </div>
+                <div class="value">
+                    value: 27
+                </div>
+            </div>
+            <div class="operate">
+                <div class="draw">draw</div>
+                <div class="wipe">wipe</div>
+            </div>
         </div>
         <script src="core.js"></script>
         <script src="animate.js"></script>
-        <script src="stn.js"></script>
+        <script src="steiner.js"></script>
     </body>
 </html>

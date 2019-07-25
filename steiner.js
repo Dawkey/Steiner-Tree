@@ -14,6 +14,7 @@ $x_axis.innerHTML = axis_html;
 
 let $grid = document.getElementById("grid");
 let $point = document.getElementById("point");
+let $line = document.getElementById("line");
 
 
 $grid.width = size * size_px;
@@ -22,18 +23,21 @@ $grid.height = size * size_px;
 $point.width = size * size_px;
 $point.height = size * size_px;
 
+$line.width = size * size_px;
+$line.height = size * size_px;
 
 let grid_ctx = $grid.getContext("2d");
 grid_ctx.strokeStyle = "#b6b6b6";
-grid_ctx.fillStyle = "#b6b6b6";
-// grid_ctx.globalCompositeOperation = "source-over";
 
 let point_ctx = $point.getContext("2d");
 point_ctx.strokeStyle = "#666";
 point_ctx.fillStyle = "#fff";
 
+let line_ctx = $line.getContext("2d");
+line_ctx.strokeStyle = "red";
 
 
+//绘制坐标系
 function draw_grid(){
     grid_ctx.beginPath();
 
@@ -70,6 +74,8 @@ function draw_grid(){
 
 draw_grid();
 
+
+//绘制坐标点
 function draw_point(arr){
     point_ctx.beginPath();
     for(let i=0; i<arr.length; i++){
@@ -79,18 +85,16 @@ function draw_point(arr){
         let y_px = (size - y - 1) * size_px;
         move_point(point_ctx, x_px, y_px, 0, radius_px, 1);
     }
-    point_ctx.closePath();
     point_ctx.fill();
 }
 
+//擦拭坐标点
 function wipe_point(x,y){
     let x_px = (x+1) * size_px;
     let y_px = (size - y - 1) * size_px;
-    // point_ctx.beginPath();
     point_ctx.clearRect(x_px - radius_px, y_px - radius_px, 2*radius_px, 2*radius_px);
 }
 
-let prev_position = null;
 
 let entry_arr = [];
 
@@ -106,7 +110,7 @@ $point.addEventListener("click", function(e){
 });
 
 
-let $start = document.querySelector(".start");
+let $start = document.querySelector(".draw");
 
 let prev_tree = null;
 
@@ -116,39 +120,16 @@ $start.addEventListener("click", function(){
     let edge_arr = result.edge;
     let tree = result.tree;
 
-    // grid_ctx.clearRect(0, 0, 500, 500);
-    // grid_ctx.beginPath();
-    // grid_ctx.strokeStyle = "#b6b6b6";
-    // draw_grid();
-
+    //count是一个用来判断绘制动画是否结束的 flag。
     let count = 0;
 
-    if(prev_tree){
-        grid_ctx.beginPath();
-        grid_ctx.strokeStyle = "#b6b6b6";
-        loop_tree(prev_tree, null, Promise.resolve(), function(){
-            // grid_ctx.beginPath();
-            // grid_ctx.strokeStyle = "red";
+    line_ctx.beginPath();
+    line_ctx.strokeStyle = "red";
 
-            // loop_tree(tree, null, Promise.resolve("first"));
-            // grid_ctx.stroke();
-            console.log("wwk");
-        });    
-        grid_ctx.stroke();
-        prev_tree = tree;
-        return;
-    }
+    loop_tree(tree, null, Promise.resolve());
+    line_ctx.stroke();
 
-    prev_tree = tree;
-
-
-    console.log("!!!!!!!!");
-    grid_ctx.beginPath();
-    grid_ctx.strokeStyle = "red";
-
-    loop_tree(tree, null, Promise.resolve("first"));
-    grid_ctx.stroke();
-
+    //由树的数据结构，广度遍历树的每一个节点，绘制父节点到子节点的路径（使用move_line达到动画效果）。
     function loop_tree(node, prev_node, line_promise, fn){
         if(prev_node){
             let now_point = node.value;
@@ -162,11 +143,12 @@ $start.addEventListener("click", function(){
             let y2 = now_point[1];
             let x2_px = (x2 + 1) * size_px;
             let y2_px = (size - y2 - 1) * size_px;
-            var temp_promise = line_promise.then(function(val){
+            var temp_promise = line_promise.then(function(){
                 if(node.next !== null){
+                    //每次树有新的分支时，对count进行加一。
                     count++;
                 }
-                return move_line(grid_ctx, [x1_px, y1_px], [x2_px, y2_px], 1, 1);
+                return move_line(line_ctx, [x1_px, y1_px], [x2_px, y2_px], 1, 1);
             });
         }else{
             temp_promise = line_promise;
@@ -176,11 +158,11 @@ $start.addEventListener("click", function(){
         if(next === null){
             temp_promise.then(function(){
                 count++;
+                //最终count + 1的值等于树上节点总数，代表斯坦纳树绘制完成，执行回调函数，结束。
                 if(count + 1 === point_arr.length){
                     if(fn){
                         fn();
                     }
-                    console.log("RUA!");
                 }
             });
             return;
@@ -193,12 +175,17 @@ $start.addEventListener("click", function(){
 });
 
 
+//查找二维数组中是否有传入的坐标点
 function arr_include(arr, val){
-    let flag = arr.some(function(value){
-        return val.toString() === value.toString();
+    let ret_index = -1;
+
+    arr.some(function(value, index){
+        let flag = val.toString() === value.toString();
+        if(flag){
+            ret_index = index;
+        }
+        return flag;
     });
 
-    return flag;
+    return ret_index;
 }
-
-

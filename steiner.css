@@ -1,0 +1,119 @@
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: 'Times New Roman';
+}
+.main {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 525px;
+  height: 525px;
+}
+.main .axis {
+  color: #777;
+}
+.main .axis #grid {
+  position: relative;
+  z-index: 8;
+}
+.main .axis #line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 9;
+}
+.main .axis #point {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+}
+.main .axis .x_axis {
+  position: absolute;
+  bottom: 0;
+  left: 52px;
+  display: flex;
+  font-size: 17px;
+}
+.main .axis .x_axis > div {
+  width: 35px;
+  height: 35px;
+  line-height: 25px;
+  text-align: center;
+}
+.main .axis .y_axis {
+  position: absolute;
+  top: 17px;
+  left: 0;
+  display: flex;
+  flex-direction: column-reverse;
+  font-size: 17px;
+}
+.main .axis .y_axis > div {
+  width: 35px;
+  height: 35px;
+  line-height: 35px;
+  text-align: center;
+}
+.main .axis .O {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  font-size: 18px;
+  font-style: italic;
+}
+.main .entry {
+  display: flex;
+  flex-direction: column-reverse;
+  text-align: end;
+  color: #777;
+  position: absolute;
+  transform: translateX(-100%);
+  bottom: 35px;
+  width: 75px;
+  max-height: 455px;
+  border-radius: 2px;
+  padding: 0 10px;
+  line-height: 35px;
+  box-shadow: 2px 2px 4px -2px #bbb;
+  box-sizing: border-box;
+}
+.main .result {
+  position: absolute;
+  bottom: 35px;
+  right: -10px;
+  color: #777;
+  font-size: 16px;
+  line-height: 35px;
+  padding: 0 10px;
+  box-sizing: border-box;
+  border-radius: 2px;
+  box-shadow: -2px 2px 4px -2px #bbb;
+  transform: translateX(100%);
+}
+.main .operate {
+  display: flex;
+  justify-content: center;
+  font-size: 16px;
+}
+.main .operate .draw {
+  margin-right: 45px;
+}
+.main .operate .draw,
+.main .operate .wipe {
+  line-height: 27px;
+  text-align: center;
+  width: 60px;
+  border-radius: 3px;
+  background: #7c7c7c;
+  color: #fff;
+  box-shadow: 0 0 3px 0 #7c7c7c;
+  cursor: pointer;
+}
+.main .operate .draw:hover,
+.main .operate .wipe:hover {
+  background: #666;
+}
