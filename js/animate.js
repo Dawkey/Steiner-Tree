@@ -31,14 +31,17 @@ var move_line, move_point;
     
 
     function animate_point(ctx, x, y, start_r ,end_r, speed, resolve){
-    
-        if(start_r >= end_r){
+
+        if(speed * start_r >= speed * end_r){
             resolve("done");
             return;
         }
     
+        //清除先前点的绘制路径。（主要用于绘制环状点）
+        ctx.clearRect(x - start_r - 2, y - start_r - 2, 2*start_r + 4, 2*start_r + 4);
+
         let new_r = start_r + speed;
-        if(new_r > end_r) new_r = end_r;
+        if(speed * new_r > speed * end_r) new_r = end_r;
         ctx.beginPath();
         ctx.arc(x, y, new_r, 0, 2*Math.PI,true);
         ctx.fill();

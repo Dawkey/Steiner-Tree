@@ -1,4 +1,15 @@
-function steiner(arr){
+self.onmessage = function(event){
+    let data = event.data;
+    let entry_arr = data.entry_arr;
+    let start_point = data.start_point;
+    let result = steiner(entry_arr, start_point);
+    this.postMessage({result: result});
+}
+
+function steiner(arr, start_point){
+    if(arr.length < 2){
+        return;
+    }
 
     let st = [];
     let dptree = [];
@@ -136,7 +147,6 @@ function steiner(arr){
     
     //spfa算法对边进行松弛操作。
     function spfa(state){
-    
         while(que.length){
             let u = que.shift();
             flag[u][state] = false;
@@ -205,8 +215,12 @@ function steiner(arr){
 
             node.next = next_arr;
         }
-
+                
         let tree = {value: edge_arr[0][0], next: null};
+        if(start_point){
+            tree.value = start_point;
+        }
+
         generate_tree(tree);
         return tree;
     }    
@@ -215,7 +229,6 @@ function steiner(arr){
     
     //入口函数，根据输入的坐标点集（数组），给出斯坦纳树问题的解。
     function entry(arr){
-    
         let x_arr = new Set();
         let y_arr = new Set();
     
@@ -266,12 +279,16 @@ function steiner(arr){
             }
         }
     
+        let start_time = new Date().getTime();
 
         let result = main(xy_arr.length,arr_k,graph_arr);
-        
+
+        let end_time = new Date().getTime();
+
         let min_val = result[0];
         let point_arr = result[1];
         let edge_arr = result[2];
+        let time = end_time -start_time;
 
         point_arr = point_arr.map((val) => xy_arr[val]);
 
@@ -281,10 +298,9 @@ function steiner(arr){
         
         let tree = arr_to_tree(edge_arr);
 
-        return {cost: min_val, point: point_arr, edge: edge_arr, tree: tree};
+        return {cost: min_val, time: time, point: point_arr, edge: edge_arr, tree: tree};
     }   
 
 
     return entry(arr);
 }
-

@@ -1,0 +1,199 @@
+html,body{
+    padding: 0;
+    margin: 0;
+    font-family: 'Times New Roman';
+}
+
+.main{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 595px;
+    height: 595px;
+
+    &.loading{
+        .loading{
+            display: block;
+        }
+    }
+
+    .title{
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 0 3px 3px;
+        box-shadow: 0px 2px 2px -2px #bbb;
+    }
+
+    .axis{
+        color: #777;
+        #grid{
+            position: relative;
+            z-index: 8;
+        }
+        
+        #line{
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 9;
+        }
+        
+        #point{
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+        }
+
+        .x_axis{
+            position: absolute;
+            bottom: 0;
+            left: 52px;
+            display: flex;
+            font-size: 17px;
+            >div{
+                width: 35px;
+                height: 35px;
+                line-height: 25px;
+                text-align: center;
+            }
+        }
+
+        .y_axis{
+            position: absolute;
+            top: 17px;
+            left: 0;
+            display: flex;
+            flex-direction: column-reverse;
+            font-size: 17px;
+            >div{
+                width: 35px;
+                height: 35px;
+                line-height: 35px;
+                text-align: center;
+            }
+        }
+
+        .O{
+            position: absolute;
+            left: 16px;
+            bottom: 16px;
+            font-size: 18px;
+            font-style: italic;
+        }
+
+    }
+
+    .entry{
+        position: absolute;
+        bottom: 35px;
+        left: -10px;
+        display: flex;
+        flex-wrap: wrap-reverse;
+        flex-direction: column-reverse;
+        color: #777;
+        position: absolute;
+        transform: translateX(-100%);
+        bottom: 35px;
+        line-height: 35px;
+        box-shadow: 3px 0px 2px -3px #bbb;
+        box-sizing: border-box;
+        width: 70px;        
+        >div{            
+            padding-right: 10px;
+            box-sizing: border-box;
+            text-align: right;
+        }
+    }
+
+    .result{
+        position: absolute;
+        display: flex;
+        flex-direction: column-reverse;
+        bottom: 35px;
+        right: -10px;
+        color: #777;
+        font-size: 16px;
+        line-height: 35px;
+        padding-left: 8px;
+        box-sizing: border-box;
+        box-shadow: -3px 0px 2px -3px #bbb;
+        transform: translateX(100%);
+    }
+
+    .operate{
+        display: flex;
+        justify-content: center;
+        font-size: 16px;
+        .draw{
+            margin-right: 45px;
+        }
+        .draw,.wipe{
+            line-height: 27px;
+            text-align: center;
+            width: 60px;                   
+            box-shadow: 0px 0px 2px #ccc;
+            cursor: pointer;
+            &:hover{
+                background: #ccc;
+            }
+        }
+    }
+
+    .loading{
+        display: none;
+        position: absolute;
+        width: 35px;
+        top: 35px;
+        right: -10px;
+        padding-left: 3px;
+        transform: translateX(100%);
+        box-shadow: -3px 0px 2px -3px #bbb;
+        transition: opacity 300ms;
+        .loading_icon {
+            display: inline-block;
+            position: relative;
+            width: 30px;
+            height: 30px;
+            >div{
+                box-sizing: border-box;
+                display: block;
+                position: absolute;
+                width: 30px;
+                height: 30px;
+                margin: 2px;
+                border: 2px solid;
+                border-radius: 50%;
+                animation: rotate 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+                border-color: #bbb transparent transparent transparent;
+                &:nth-child(1){
+                    animation-delay: -0.45s;
+                }
+                &:nth-child(2){
+                    animation-delay: -0.3s;
+                }
+                &:nth-child(3){
+                    animation-delay: -0.15s;
+                }
+            }
+        }
+        .loading_info{
+            writing-mode: vertical-rl;
+            line-height: 30px;
+            margin-top: 10px;
+            padding-bottom: 5px;
+        }
+    }
+}
+
+@keyframes rotate{
+    0%{
+        transform: rotate(0deg);
+    }
+    100%{
+        transform: rotate(360deg);
+    }
+}

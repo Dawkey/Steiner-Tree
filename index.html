@@ -1,11 +1,13 @@
 <!DOCTYPE html>
     <head>
         <title>steiner</title>
-        <link href="steiner.css" rel="stylesheet" type="text/css">
+        <link href="./css/steiner.css" rel="stylesheet" type="text/css">
     </head>
     <body>
         <div class="main">
-            <div class="info"></div>
+            <div class="title">
+                Steiner Tree Problem in grid graph
+            </div>
 
             <div class="axis">
                 <canvas id="grid"></canvas>
@@ -18,25 +20,37 @@
             </div>
 
             <div class="entry">
-                <div class="point">(1, 5)</div>
-                <div class="point">(12, 7)</div>
-                <div class="point">(12, 10)</div>
+                <!-- <div>[--, --]</div> -->
             </div>
+
             <div class="result">
-                <div class="time">
-                    time: 5m 42s
+                <!-- <div class="time">
+                    time: --
                 </div>
-                <div class="value">
-                    value: 27
-                </div>
+                <div class="cost">
+                    cost: --
+                </div> -->
             </div>
+
             <div class="operate">
                 <div class="draw">draw</div>
                 <div class="wipe">wipe</div>
             </div>
+
+            <div class="loading">                
+                <div class="loading_icon">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>                
+                <div class="loading_info">
+                    It takes about 3-40 seconds.
+                </div>
+            </div>
         </div>
-        <script src="core.js"></script>
-        <script src="animate.js"></script>
-        <script src="steiner.js"></script>
+        <!-- <script src="./js/core.js"></script> -->
+        <script src="./js/animate.js"></script>
+        <script src="./js/steiner.js"></script>
     </body>
 </html>
